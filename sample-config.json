@@ -1,5 +1,4 @@
 {
-    "behaviorIfConflict": "replace",
     "downloadsByDestination": [
         {
             "destinationParts": ["generated", "javascript", "lib"],

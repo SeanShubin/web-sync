@@ -1,5 +1,18 @@
 package com.seanshubin.web.sync.core
 
-class RunnerImpl(target: String, emitLine: String => Unit) extends Runner {
-  override def run(): Unit = emitLine(s"Hello, $target!")
+import java.nio.file.Path
+
+class RunnerImpl(configurationFilePath: Path,
+                 fileSystem: FileSystem,
+                 configurationParser: ConfigurationParser,
+                 downloader: Downloader,
+                 reporter: Reporter,
+                 shutdownHandler: ShutdownHandler) extends Runner {
+  override def run(): Unit = {
+    val configurationText = fileSystem.readFileIntoString(configurationFilePath)
+    val downloads = configurationParser.parse(configurationText)
+    val downloadResults = downloader.download(downloads)
+    reporter.generateReport(downloadResults)
+    shutdownHandler.shutdown(downloadResults)
+  }
 }
