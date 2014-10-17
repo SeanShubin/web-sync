@@ -27,17 +27,42 @@ class ConfigurationParserTest extends FunSuite {
         |}
         | """.stripMargin
 
-    val barPath = Paths.get("foo", "bar").toString
-    val bazPath = Paths.get("foo", "baz").toString
+    val textPath = Paths.get("foo", "bar", "text.js").toString
+    val domReadyPath = Paths.get("foo", "bar", "domReady.js").toString
+    val qunitJsPath = Paths.get("foo", "baz", "qunit-1.15.0.js").toString
+    val qunitCssPath = Paths.get("foo", "baz", "qunit-1.15.0.css").toString
     val expected = Seq(
-      Download("https://raw.githubusercontent.com/requirejs/text/latest/text.js", barPath),
-      Download("https://raw.githubusercontent.com/requirejs/domReady/latest/domReady.js", barPath),
-      Download("http://code.jquery.com/qunit/qunit-1.15.0.js", bazPath),
-      Download("http://code.jquery.com/qunit/qunit-1.15.0.css", bazPath)
+      Download("https://raw.githubusercontent.com/requirejs/text/latest/text.js", textPath),
+      Download("https://raw.githubusercontent.com/requirejs/domReady/latest/domReady.js", domReadyPath),
+      Download("http://code.jquery.com/qunit/qunit-1.15.0.js", qunitJsPath),
+      Download("http://code.jquery.com/qunit/qunit-1.15.0.css", qunitCssPath)
     )
     val jsonMarshaller: JsonMarshaller = new JsonMarshallerImpl()
     val configurationParser: ConfigurationParser = new ConfigurationParserImpl(jsonMarshaller)
     val actual = configurationParser.parse(configurationText)
-    assert(actual === expected)
+    assertSequencesEqual(actual, expected)
+  }
+
+  def assertSequencesEqual[T](actual: Seq[T], expected: Seq[T], index: Int = 0): Unit = {
+    if (actual.isEmpty) {
+      if (expected.isEmpty) {
+        //done
+      } else {
+        fail(s"missing at index $index, expected:\n${expected.head}")
+      }
+    } else {
+      if (expected.isEmpty) {
+        fail(s"extra at index $index, did not expect:\n${expected.head}")
+      } else {
+        assert(actual.head === expected.head, s"comparison at index $index")
+        assertSequencesEqual(actual.tail, expected.tail, index + 1)
+      }
+    }
   }
 }
+
+/*
+Download(https://raw.githubusercontent.com/requirejs/text/latest/text.js,/text.js)
+Download(https://raw.githubusercontent.com/requirejs/text/latest/text.js,foo/bar/text.js) comparison at index 0
+
+ */

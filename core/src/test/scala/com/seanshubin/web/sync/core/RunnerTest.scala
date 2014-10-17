@@ -16,7 +16,7 @@ class RunnerTest extends FunSuite with EasyMockSugar {
     val shutdownHandler: ShutdownHandler = mock[ShutdownHandler]
     val runner: Runner = new RunnerImpl(configurationLocation, fileSystem, configurationParser, downloader, reporter, shutdownHandler)
     val downloads: Seq[Download] = Seq(Download("foo1", "bar1"), Download("foo2", "bar2"))
-    val downloadResults: String = "download results"
+    val downloadResults: Seq[DownloadResult] = Seq()
     expecting {
       fileSystem.readFileIntoString(configurationLocation).andReturn(configurationText)
       configurationParser.parse(configurationText).andReturn(downloads)

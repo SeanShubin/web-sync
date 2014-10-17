@@ -1,5 +1,5 @@
 package com.seanshubin.web.sync.core
 
 trait Reporter {
-  def generateReport(downloadResults: String)
+  def generateReport(downloadResults: Seq[DownloadResult])
 }
