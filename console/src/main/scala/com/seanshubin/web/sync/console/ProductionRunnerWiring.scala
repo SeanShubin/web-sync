@@ -19,7 +19,7 @@ trait ProductionRunnerWiring {
   lazy val oneWayHash: OneWayHash = new Sha256()
   lazy val sender: Sender = new HttpSender()
   lazy val downloader: Downloader = new DownloaderImpl(sender, oneWayHash, systemClock, fileSystem, emit)
-  lazy val reporter: Reporter = new ReporterImpl(reportPath, jsonMarshaller, fileSystem)
+  lazy val reporter: Reporter = new ReporterImpl(jsonMarshaller, fileSystem)
   lazy val systemShutdown: SystemShutdown = new SystemShutdownImpl
   lazy val shutdownHandler: ShutdownHandler = new ShutdownHandlerImpl(systemShutdown, emit)
   lazy val runner: Runner = new RunnerImpl(

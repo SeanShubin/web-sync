@@ -1,7 +1,8 @@
 {
+    "reportPathParts": ["generated", "report", "web-sync.json"],
     "downloadsByDestination": [
         {
-            "destinationParts": ["generated", "javascript", "lib"],
+            "destinationPathParts": ["generated", "javascript", "lib"],
             "sourceUrls": [
                 "http://requirejs.org/docs/release/2.1.15/comments/require.js",
                 "https://raw.githubusercontent.com/requirejs/text/latest/text.js",

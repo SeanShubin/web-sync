@@ -1,3 +1,3 @@
 package com.seanshubin.web.sync.core
 
-case class JsonConfiguration(downloadsByDestination: Seq[DownloadsByDestination])
+case class JsonConfiguration(reportPathParts: Seq[String], downloadsByDestination: Seq[DownloadsByDestination])

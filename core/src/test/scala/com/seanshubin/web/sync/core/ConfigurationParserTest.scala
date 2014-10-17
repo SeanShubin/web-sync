@@ -8,16 +8,17 @@ class ConfigurationParserTest extends FunSuite {
   test("parse configuration") {
     val configurationText =
       """{
+        |    "reportPathParts": ["foo", "reports", "report.json"],
         |    "downloadsByDestination": [
         |        {
-        |            "destinationParts": ["foo", "bar"],
+        |            "destinationPathParts": ["foo", "bar"],
         |            "sourceUrls": [
         |                "https://raw.githubusercontent.com/requirejs/text/latest/text.js",
         |                "https://raw.githubusercontent.com/requirejs/domReady/latest/domReady.js"
         |            ]
         |        },
         |        {
-        |            "destinationParts": ["foo", "baz"],
+        |            "destinationPathParts": ["foo", "baz"],
         |            "sourceUrls": [
         |                "http://code.jquery.com/qunit/qunit-1.15.0.js",
         |                "http://code.jquery.com/qunit/qunit-1.15.0.css"
@@ -27,11 +28,12 @@ class ConfigurationParserTest extends FunSuite {
         |}
         | """.stripMargin
 
-    val textPath = Paths.get("foo", "bar", "text.js").toString
-    val domReadyPath = Paths.get("foo", "bar", "domReady.js").toString
-    val qunitJsPath = Paths.get("foo", "baz", "qunit-1.15.0.js").toString
-    val qunitCssPath = Paths.get("foo", "baz", "qunit-1.15.0.css").toString
-    val expected = Seq(
+    val textPath = Paths.get("foo", "bar", "text.js")
+    val domReadyPath = Paths.get("foo", "bar", "domReady.js")
+    val qunitJsPath = Paths.get("foo", "baz", "qunit-1.15.0.js")
+    val qunitCssPath = Paths.get("foo", "baz", "qunit-1.15.0.css")
+    val expectedReportPath = Paths.get("foo", "reports", "report.json")
+    val expectedDownloads = Seq(
       Download("https://raw.githubusercontent.com/requirejs/text/latest/text.js", textPath),
       Download("https://raw.githubusercontent.com/requirejs/domReady/latest/domReady.js", domReadyPath),
       Download("http://code.jquery.com/qunit/qunit-1.15.0.js", qunitJsPath),
@@ -40,7 +42,8 @@ class ConfigurationParserTest extends FunSuite {
     val jsonMarshaller: JsonMarshaller = new JsonMarshallerImpl()
     val configurationParser: ConfigurationParser = new ConfigurationParserImpl(jsonMarshaller)
     val actual = configurationParser.parse(configurationText)
-    assertSequencesEqual(actual, expected)
+    assert(actual.reportPath === expectedReportPath)
+    assertSequencesEqual(actual.downloads, expectedDownloads)
   }
 
   def assertSequencesEqual[T](actual: Seq[T], expected: Seq[T], index: Int = 0): Unit = {
@@ -60,9 +63,3 @@ class ConfigurationParserTest extends FunSuite {
     }
   }
 }
-
-/*
-Download(https://raw.githubusercontent.com/requirejs/text/latest/text.js,/text.js)
-Download(https://raw.githubusercontent.com/requirejs/text/latest/text.js,foo/bar/text.js) comparison at index 0
-
- */

@@ -1,6 +1,6 @@
 package com.seanshubin.web.sync.core
 
-import java.nio.file.{Path, Paths}
+import java.nio.file.Path
 
 import com.seanshubin.http.values.core.{RequestValue, ResponseValue, Sender}
 
@@ -16,15 +16,14 @@ class DownloaderImpl(sender: Sender,
   private def singleDownload(download: Download): DownloadResult = {
     val request = RequestValue(download.url, "get", Seq(), Map())
     val response = sender.send(request)
-    val localFilePath = Paths.get(download.path)
     val remoteExists = ResponseValue.isSuccess(response.statusCode)
-    val localExists = fileSystem.fileExists(localFilePath)
+    val localExists = fileSystem.fileExists(download.path)
     val time = systemClock.currentTimeMillis
     (remoteExists, localExists) match {
-      case (true, true) => handleBothExist(download.url, localFilePath, response.body, time)
-      case (true, false) => doDownload(download.url, response.body, localFilePath, time)
-      case (false, true) => errorRemoteHasGoneMissing(download.url, localFilePath, time)
-      case (false, false) => errorNotFoundAnywhere(download.url, localFilePath, time)
+      case (true, true) => handleBothExist(download.url, download.path, response.body, time)
+      case (true, false) => doDownload(download.url, response.body, download.path, time)
+      case (false, true) => errorRemoteHasGoneMissing(download.url, download.path, time)
+      case (false, false) => errorNotFoundAnywhere(download.url, download.path, time)
     }
   }
 

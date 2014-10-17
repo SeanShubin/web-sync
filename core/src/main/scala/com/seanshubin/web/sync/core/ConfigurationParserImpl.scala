@@ -3,7 +3,7 @@ package com.seanshubin.web.sync.core
 import java.nio.file.Paths
 
 class ConfigurationParserImpl(jsonMarshaller: JsonMarshaller) extends ConfigurationParser {
-  override def parse(text: String): Seq[Download] = {
+  override def parse(text: String): Configuration = {
     val jsonConfiguration = jsonMarshaller.fromJson(text, classOf[JsonConfiguration])
     val downloads = for {
       downloadByDestination <- jsonConfiguration.downloadsByDestination
@@ -13,15 +13,15 @@ class ConfigurationParserImpl(jsonMarshaller: JsonMarshaller) extends Configurat
     } yield {
       download
     }
-    downloads
+    val reportPath = Paths.get(jsonConfiguration.reportPathParts.head, jsonConfiguration.reportPathParts.tail: _*)
+    Configuration(reportPath, downloads)
   }
 
   def composeDownload(destinationParts: Seq[String], sourceUrl: String): Download = {
     val destinationDir = Paths.get(destinationParts.head, destinationParts.tail: _*)
     val name = splitNameFromUrl(sourceUrl)
     val destinationPath = destinationDir.resolve(name)
-    val destinationPathString = destinationPath.toString
-    Download(sourceUrl, destinationPathString)
+    Download(sourceUrl, destinationPath)
   }
 
   def splitNameFromUrl(url: String): String = {

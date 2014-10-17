@@ -1,3 +1,5 @@
 package com.seanshubin.web.sync.core
 
-case class Download(url: String, path: String)
+import java.nio.file.Path
+
+case class Download(url: String, path: Path)
