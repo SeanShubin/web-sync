@@ -71,11 +71,11 @@ class DownloaderImpl(sender: Sender,
       remoteHash = None)
   }
 
-  private def doNothing(url: String, path: Path, localHash:String, remoteHash:String, time: Long): DownloadResult = {
+  private def doNothing(url: String, path: Path, localHash: String, remoteHash: String, time: Long): DownloadResult = {
     DownloadResult(url, path, time, DownloadStatus.SameInLocalAndRemote, Some(localHash), Some(remoteHash))
   }
 
-  private def errorFilesDifferent(url: String, path: Path, localHash:String, remoteHash:String, time: Long): DownloadResult = {
+  private def errorFilesDifferent(url: String, path: Path, localHash: String, remoteHash: String, time: Long): DownloadResult = {
     DownloadResult(url, path, time, DownloadStatus.DifferentInLocalAndRemote, Some(localHash), Some(remoteHash))
   }
 }
