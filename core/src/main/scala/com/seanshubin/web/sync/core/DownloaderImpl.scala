@@ -31,7 +31,8 @@ class DownloaderImpl(sender: Sender,
     val localBytes = fileSystem.readFileIntoBytes(localPath)
     val localHash = oneWayHash.toHexString(localBytes)
     val remoteHash = oneWayHash.toHexString(remoteBytes)
-    if (localHash == remoteHash) doNothing(url, localPath, localBytes, time) else errorFilesDifferent(url, localPath, localBytes, time)
+    if (localHash == remoteHash) doNothing(url, localPath, localHash, remoteHash, time)
+    else errorFilesDifferent(url, localPath, localHash, remoteHash, time)
   }
 
   private def doDownload(url: String, remoteBytes: Seq[Byte], localPath: Path, time: Long): DownloadResult = {
@@ -39,26 +40,42 @@ class DownloaderImpl(sender: Sender,
     fileSystem.writeBytesToFile(remoteBytes, localPath)
     val hash = oneWayHash.toHexString(remoteBytes)
     emit(s"Downloading $url -> $localPath")
-    DownloadResult(url, localPath, Some(hash), time, DownloadStatus.MissingFromLocalAndPresentInRemote)
+    DownloadResult(
+      url,
+      localPath,
+      time,
+      DownloadStatus.MissingFromLocalAndPresentInRemote,
+      localHash = None,
+      remoteHash = Some(hash))
   }
 
   private def errorRemoteHasGoneMissing(url: String, path: Path, time: Long): DownloadResult = {
     val localBytes = fileSystem.readFileIntoBytes(path)
     val localHash = oneWayHash.toHexString(localBytes)
-    DownloadResult(url, path, Some(localHash), time, DownloadStatus.PresentLocallyAndMissingFromRemote)
+    DownloadResult(
+      url,
+      path,
+      time,
+      DownloadStatus.PresentLocallyAndMissingFromRemote,
+      localHash = Some(localHash),
+      remoteHash = None)
   }
 
   private def errorNotFoundAnywhere(url: String, path: Path, time: Long): DownloadResult = {
-    DownloadResult(url, path, None, time, DownloadStatus.MissingFromLocalAndRemote)
+    DownloadResult(
+      url,
+      path,
+      time,
+      DownloadStatus.MissingFromLocalAndRemote,
+      localHash = None,
+      remoteHash = None)
   }
 
-  private def doNothing(url: String, path: Path, localBytes:Seq[Byte], time: Long): DownloadResult = {
-    val localHash = oneWayHash.toHexString(localBytes)
-    DownloadResult(url, path, Some(localHash), time, DownloadStatus.SameInLocalAndRemote)
+  private def doNothing(url: String, path: Path, localHash:String, remoteHash:String, time: Long): DownloadResult = {
+    DownloadResult(url, path, time, DownloadStatus.SameInLocalAndRemote, Some(localHash), Some(remoteHash))
   }
 
-  private def errorFilesDifferent(url: String, path: Path, localBytes:Seq[Byte], time: Long): DownloadResult = {
-    val localHash = oneWayHash.toHexString(localBytes)
-    DownloadResult(url, path, Some(localHash), time, DownloadStatus.DifferentInLocalAndRemote)
+  private def errorFilesDifferent(url: String, path: Path, localHash:String, remoteHash:String, time: Long): DownloadResult = {
+    DownloadResult(url, path, time, DownloadStatus.DifferentInLocalAndRemote, Some(localHash), Some(remoteHash))
   }
 }

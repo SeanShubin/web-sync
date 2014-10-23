@@ -4,6 +4,7 @@ import scala.collection.mutable.ArrayBuffer
 
 sealed abstract case class DownloadStatus(isError: Boolean, name: String, description: String) {
   DownloadStatus.valuesBuffer += this
+  override def toString = name
 }
 
 object DownloadStatus {
