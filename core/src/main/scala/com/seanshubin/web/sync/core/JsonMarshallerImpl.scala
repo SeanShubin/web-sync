@@ -1,6 +1,7 @@
 package com.seanshubin.web.sync.core
 
 import java.io.StringWriter
+import java.nio.file.Path
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.JsonParseException
@@ -12,14 +13,21 @@ import scala.collection.JavaConversions
 
 class JsonMarshallerImpl extends JsonMarshaller {
   private val mapper = new ObjectMapper()
-  private val downloadStatusModule = new SimpleModule()
-  downloadStatusModule.addSerializer(classOf[DownloadStatus], new DownloadStatusSerializer)
-  downloadStatusModule.addDeserializer(classOf[DownloadStatus], new DownloadStatusDeserializer)
-  mapper.registerModule(DefaultScalaModule)
   mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
   mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
   mapper.configure(SerializationFeature.INDENT_OUTPUT, true)
+
+  mapper.registerModule(DefaultScalaModule)
+
+  private val downloadStatusModule = new SimpleModule()
+  downloadStatusModule.addSerializer(classOf[DownloadStatus], new DownloadStatusSerializer)
+  downloadStatusModule.addDeserializer(classOf[DownloadStatus], new DownloadStatusDeserializer)
   mapper.registerModule(downloadStatusModule)
+
+  private val pathModule = new SimpleModule()
+  pathModule.addSerializer(classOf[Path], new PathSerializer)
+  pathModule.addDeserializer(classOf[Path], new PathDeserializer)
+  mapper.registerModule(pathModule)
 
   override def toJson[T](theObject: T): String = {
     val stringWriter = new StringWriter
