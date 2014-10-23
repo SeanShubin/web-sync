@@ -1,6 +1,8 @@
 package com.seanshubin.web.sync.core
 
-case class DownloadResult(url: String, path: String, hash: Option[String], time: Long, status: DownloadStatus) {
+import java.nio.file.Path
+
+case class DownloadResult(url: String, path: Path, hash: Option[String], time: Long, status: DownloadStatus) {
   def errorStrings: Seq[String] =
     if (status.isError) Seq(
       s"url=$url",
