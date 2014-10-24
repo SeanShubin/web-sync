@@ -15,8 +15,9 @@ class NotificationsTest extends FunSuite {
     val emit = new FakeLineEmitter
     val notifications = new NotificationsImpl(emit)
     notifications.downloadResult(DownloadResultSamples.downloadResultDifferent)
+    val pathString = DownloadResultSamples.downloadResultDifferent.path.toString
     assert(emit.lines.size === 1)
-    assert(emit.lines(0) === "  different (difference between local and remote     ): http://some.url -> download/path")
+    assert(emit.lines(0) === s"  different (difference between local and remote     ): http://some.url -> $pathString")
   }
 
   test("summary") {
