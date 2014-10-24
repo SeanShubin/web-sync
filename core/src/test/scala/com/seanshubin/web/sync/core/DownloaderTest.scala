@@ -18,9 +18,11 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
       remoteHash = Some(helper.hash))
 
     expecting {
+      helper.notifications.beginDownloading(helper.downloads)
       helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Map())).andReturn(ResponseValue(200, helper.body, Map()))
       helper.fileSystem.fileExists(helper.localPath).andReturn(true)
       helper.fileSystem.readFileIntoBytes(helper.localPath).andReturn(helper.body)
+      helper.notifications.downloadResult(expectedDownloadResult)
     }
 
     whenExecuting(helper.mocks: _*) {
@@ -28,8 +30,6 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
       assert(results.size === 1)
       assert(results(0) === expectedDownloadResult)
     }
-
-    assert(helper.emit.lines.size === 0)
   }
 
   test("missing from both local and remote") {
@@ -42,8 +42,10 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
       remoteHash = None)
 
     expecting {
+      helper.notifications.beginDownloading(helper.downloads)
       helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Map())).andReturn(ResponseValue(404, Seq(), Map()))
       helper.fileSystem.fileExists(helper.localPath).andReturn(false)
+      helper.notifications.downloadResult(expectedDownloadResult)
     }
 
     whenExecuting(helper.mocks: _*) {
@@ -51,8 +53,6 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
       assert(results.size === 1)
       assert(results(0) === expectedDownloadResult)
     }
-
-    assert(helper.emit.lines.size === 0)
   }
 
   test("download if missing locally and exists remotely") {
@@ -66,10 +66,12 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
     )
 
     expecting {
+      helper.notifications.beginDownloading(helper.downloads)
       helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Map())).andReturn(ResponseValue(200, helper.body, Map()))
       helper.fileSystem.fileExists(helper.localPath).andReturn(false)
       helper.fileSystem.createMissingDirectories(helper.localDir)
       helper.fileSystem.writeBytesToFile(helper.body, helper.localPath)
+      helper.notifications.downloadResult(expectedDownloadResult)
     }
 
     whenExecuting(helper.mocks: _*) {
@@ -77,9 +79,6 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
       assert(results.size === 1)
       assert(results(0) === expectedDownloadResult)
     }
-
-    assert(helper.emit.lines.size === 1)
-    assert(helper.emit.lines(0) === s"Downloading remote url -> ${helper.localPath}")
   }
 
   test("exists locally and missing remotely") {
@@ -92,9 +91,11 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
       remoteHash = None)
 
     expecting {
+      helper.notifications.beginDownloading(helper.downloads)
       helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Map())).andReturn(ResponseValue(404, helper.body, Map()))
       helper.fileSystem.fileExists(helper.localPath).andReturn(true)
       helper.fileSystem.readFileIntoBytes(helper.localPath).andReturn(helper.body)
+      helper.notifications.downloadResult(expectedDownloadResult)
     }
 
     whenExecuting(helper.mocks: _*) {
@@ -102,8 +103,6 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
       assert(results.size === 1)
       assert(results(0) === expectedDownloadResult)
     }
-
-    assert(helper.emit.lines.size === 0)
   }
 
   test("files different") {
@@ -116,9 +115,11 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
       remoteHash = Some(helper.differentHash))
 
     expecting {
+      helper.notifications.beginDownloading(helper.downloads)
       helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Map())).andReturn(ResponseValue(200, helper.differentBody, Map()))
       helper.fileSystem.fileExists(helper.localPath).andReturn(true)
       helper.fileSystem.readFileIntoBytes(helper.localPath).andReturn(helper.body)
+      helper.notifications.downloadResult(expectedDownloadResult)
     }
 
     whenExecuting(helper.mocks: _*) {
@@ -126,16 +127,14 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
       assert(results.size === 1)
       assert(results(0) === expectedDownloadResult)
     }
-
-    assert(helper.emit.lines.size === 0)
   }
 
   class Helper {
     val sender: Sender = mock[Sender]
     val oneWayHash: OneWayHash = new Sha256
     val fileSystem: FileSystem = mock[FileSystem]
-    val emit = new FakeLineEmitter()
-    val downloader = new DownloaderImpl(sender, oneWayHash, fileSystem, emit)
+    val notifications: Notifications = mock[Notifications]
+    val downloader = new DownloaderImpl(sender, oneWayHash, fileSystem, notifications)
     val remoteUrl: String = "remote url"
     val localPath: Path = Paths.get("local", "path")
     val localDir: Path = localPath.getParent
@@ -144,7 +143,7 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
     val differentBody = "goodbye".getBytes(StandardCharsets.UTF_8)
     val hash = oneWayHash.toHexString(body)
     val differentHash = oneWayHash.toHexString(differentBody)
-    val mocks = Seq(sender, fileSystem)
+    val mocks = Seq(sender, fileSystem, notifications)
   }
 
 }

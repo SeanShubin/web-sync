@@ -17,15 +17,17 @@ trait ProductionRunnerWiring {
   lazy val configurationParser: ConfigurationParser = new ConfigurationParserImpl(jsonMarshaller)
   lazy val oneWayHash: OneWayHash = new Sha256()
   lazy val sender: Sender = new HttpSender()
-  lazy val downloader: Downloader = new DownloaderImpl(sender, oneWayHash, fileSystem, emit)
+  lazy val notifications: Notifications = new NotificationsImpl(emit)
+  lazy val downloader: Downloader = new DownloaderImpl(sender, oneWayHash, fileSystem, notifications)
   lazy val reporter: Reporter = new ReporterImpl(jsonMarshaller, fileSystem)
   lazy val systemShutdown: SystemShutdown = new SystemShutdownImpl
-  lazy val shutdownHandler: ShutdownHandler = new ShutdownHandlerImpl(systemShutdown, emit)
+  lazy val shutdownHandler: ShutdownHandler = new ShutdownHandlerImpl(systemShutdown)
   lazy val runner: Runner = new RunnerImpl(
     configurationFilePath,
     fileSystem,
     configurationParser,
     downloader,
     reporter,
-    shutdownHandler)
+    shutdownHandler,
+    notifications)
 }

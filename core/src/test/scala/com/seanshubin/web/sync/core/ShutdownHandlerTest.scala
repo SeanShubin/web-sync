@@ -7,8 +7,8 @@ class ShutdownHandlerTest extends FunSuite with EasyMockSugar {
   test("exit code is zero if no errors") {
     val emit: String => Unit = new FakeLineEmitter
     val systemShutdown: SystemShutdown = mock[SystemShutdown]
-    val shutdownHandler: ShutdownHandler = new ShutdownHandlerImpl(systemShutdown, emit)
-    val downloadResults: Seq[DownloadResult] = Seq(SampleDownloadResult.downloadResultSame)
+    val shutdownHandler: ShutdownHandler = new ShutdownHandlerImpl(systemShutdown)
+    val downloadResults: Seq[DownloadResult] = Seq(DownloadResultSamples.downloadResultSame)
 
     expecting {
       systemShutdown.shutdown(0)
@@ -22,8 +22,8 @@ class ShutdownHandlerTest extends FunSuite with EasyMockSugar {
   test("exit code is not zero if errors") {
     val emit: String => Unit = new FakeLineEmitter
     val systemShutdown: SystemShutdown = mock[SystemShutdown]
-    val shutdownHandler: ShutdownHandler = new ShutdownHandlerImpl(systemShutdown, emit)
-    val downloadResults: Seq[DownloadResult] = Seq(SampleDownloadResult.downloadResultDifferent)
+    val shutdownHandler: ShutdownHandler = new ShutdownHandlerImpl(systemShutdown)
+    val downloadResults: Seq[DownloadResult] = Seq(DownloadResultSamples.downloadResultDifferent)
 
     expecting {
       systemShutdown.shutdown(1)

@@ -12,7 +12,7 @@ class ReporterTest extends FunSuite with EasyMockSugar {
     val reporter: Reporter = new ReporterImpl(jsonMarshaller, fileSystem)
 
     val reportPath = Paths.get("report", "path")
-    val downloadResults = Seq(SampleDownloadResult.downloadResultSame)
+    val downloadResults = Seq(DownloadResultSamples.downloadResultSame)
     val jsonResult = "json result"
 
     expecting {
