@@ -1,12 +1,10 @@
 package com.seanshubin.web.sync.core
 
-class ShutdownHandlerImpl(systemShutdown: SystemShutdown) extends ShutdownHandler {
+class ErrorHandlerImpl extends ErrorHandler {
   override def shutdown(downloadResults: Seq[DownloadResult]): Unit = {
     val errorCount = downloadResults.count(hasError)
-    if (errorCount == 0) {
-      systemShutdown.shutdown(0)
-    } else {
-      systemShutdown.shutdown(1)
+    if (errorCount != 0) {
+      throw new RuntimeException("Forwarding exception due to web sync errors")
     }
   }
 

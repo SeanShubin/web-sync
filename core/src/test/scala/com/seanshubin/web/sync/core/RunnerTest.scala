@@ -13,9 +13,9 @@ class RunnerTest extends FunSuite with EasyMockSugar {
     val configurationParser: ConfigurationParser = mock[ConfigurationParser]
     val downloader: Downloader = mock[Downloader]
     val reporter: Reporter = mock[Reporter]
-    val shutdownHandler: ShutdownHandler = mock[ShutdownHandler]
+    val errorHandler: ErrorHandler = mock[ErrorHandler]
     val notifications: Notifications = mock[Notifications]
-    val runner: Runner = new RunnerImpl(configurationLocation, fileSystem, configurationParser, downloader, reporter, shutdownHandler, notifications)
+    val runner: Runner = new RunnerImpl(configurationLocation, fileSystem, configurationParser, downloader, reporter, errorHandler, notifications)
     val reportPath: Path = Paths.get("foo")
     val bar1: Path = Paths.get("bar1")
     val bar2: Path = Paths.get("bar2")
@@ -28,9 +28,9 @@ class RunnerTest extends FunSuite with EasyMockSugar {
       downloader.download(downloads).andReturn(downloadResults)
       reporter.generateReport(reportPath, downloadResults)
       notifications.summary(downloadResults)
-      shutdownHandler.shutdown(downloadResults)
+      errorHandler.shutdown(downloadResults)
     }
-    whenExecuting(fileSystem, configurationParser, downloader, reporter, shutdownHandler, notifications) {
+    whenExecuting(fileSystem, configurationParser, downloader, reporter, errorHandler, notifications) {
       runner.run()
     }
   }

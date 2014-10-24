@@ -20,14 +20,13 @@ trait ProductionRunnerWiring {
   lazy val notifications: Notifications = new NotificationsImpl(emit)
   lazy val downloader: Downloader = new DownloaderImpl(sender, oneWayHash, fileSystem, notifications)
   lazy val reporter: Reporter = new ReporterImpl(jsonMarshaller, fileSystem)
-  lazy val systemShutdown: SystemShutdown = new SystemShutdownImpl
-  lazy val shutdownHandler: ShutdownHandler = new ShutdownHandlerImpl(systemShutdown)
+  lazy val errorHandler: ErrorHandler = new ErrorHandlerImpl
   lazy val runner: Runner = new RunnerImpl(
     configurationFilePath,
     fileSystem,
     configurationParser,
     downloader,
     reporter,
-    shutdownHandler,
+    errorHandler,
     notifications)
 }
