@@ -15,10 +15,9 @@ trait ProductionRunnerWiring {
   lazy val fileSystem: FileSystem = new FileSystemImpl()
   lazy val jsonMarshaller: JsonMarshaller = new JsonMarshallerImpl
   lazy val configurationParser: ConfigurationParser = new ConfigurationParserImpl(jsonMarshaller)
-  lazy val systemClock: SystemClock = new SystemClockImpl()
   lazy val oneWayHash: OneWayHash = new Sha256()
   lazy val sender: Sender = new HttpSender()
-  lazy val downloader: Downloader = new DownloaderImpl(sender, oneWayHash, systemClock, fileSystem, emit)
+  lazy val downloader: Downloader = new DownloaderImpl(sender, oneWayHash, fileSystem, emit)
   lazy val reporter: Reporter = new ReporterImpl(jsonMarshaller, fileSystem)
   lazy val systemShutdown: SystemShutdown = new SystemShutdownImpl
   lazy val shutdownHandler: ShutdownHandler = new ShutdownHandlerImpl(systemShutdown, emit)

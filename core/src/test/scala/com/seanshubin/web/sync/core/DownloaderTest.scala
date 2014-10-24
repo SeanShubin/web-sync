@@ -13,7 +13,6 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
     val expectedDownloadResult = DownloadResult(
       helper.remoteUrl,
       helper.localPath,
-      helper.now,
       DownloadStatus.SameInLocalAndRemote,
       localHash = Some(helper.hash),
       remoteHash = Some(helper.hash))
@@ -21,7 +20,6 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
     expecting {
       helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Map())).andReturn(ResponseValue(200, helper.body, Map()))
       helper.fileSystem.fileExists(helper.localPath).andReturn(true)
-      helper.systemClock.currentTimeMillis.andReturn(helper.now)
       helper.fileSystem.readFileIntoBytes(helper.localPath).andReturn(helper.body)
     }
 
@@ -39,7 +37,6 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
     val expectedDownloadResult = DownloadResult(
       helper.remoteUrl,
       helper.localPath,
-      helper.now,
       DownloadStatus.MissingFromLocalAndRemote,
       localHash = None,
       remoteHash = None)
@@ -47,7 +44,6 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
     expecting {
       helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Map())).andReturn(ResponseValue(404, Seq(), Map()))
       helper.fileSystem.fileExists(helper.localPath).andReturn(false)
-      helper.systemClock.currentTimeMillis.andReturn(helper.now)
     }
 
     whenExecuting(helper.mocks: _*) {
@@ -64,7 +60,6 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
     val expectedDownloadResult = DownloadResult(
       helper.remoteUrl,
       helper.localPath,
-      helper.now,
       DownloadStatus.MissingFromLocalAndPresentInRemote,
       localHash = None,
       remoteHash = Some(helper.hash)
@@ -73,7 +68,6 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
     expecting {
       helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Map())).andReturn(ResponseValue(200, helper.body, Map()))
       helper.fileSystem.fileExists(helper.localPath).andReturn(false)
-      helper.systemClock.currentTimeMillis.andReturn(helper.now)
       helper.fileSystem.createMissingDirectories(helper.localDir)
       helper.fileSystem.writeBytesToFile(helper.body, helper.localPath)
     }
@@ -93,7 +87,6 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
     val expectedDownloadResult = DownloadResult(
       helper.remoteUrl,
       helper.localPath,
-      helper.now,
       DownloadStatus.PresentLocallyAndMissingFromRemote,
       localHash = Some(helper.hash),
       remoteHash = None)
@@ -102,7 +95,6 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
       helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Map())).andReturn(ResponseValue(404, helper.body, Map()))
       helper.fileSystem.fileExists(helper.localPath).andReturn(true)
       helper.fileSystem.readFileIntoBytes(helper.localPath).andReturn(helper.body)
-      helper.systemClock.currentTimeMillis.andReturn(helper.now)
     }
 
     whenExecuting(helper.mocks: _*) {
@@ -119,7 +111,6 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
     val expectedDownloadResult = DownloadResult(
       helper.remoteUrl,
       helper.localPath,
-      helper.now,
       DownloadStatus.DifferentInLocalAndRemote,
       localHash = Some(helper.hash),
       remoteHash = Some(helper.differentHash))
@@ -127,7 +118,6 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
     expecting {
       helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Map())).andReturn(ResponseValue(200, helper.differentBody, Map()))
       helper.fileSystem.fileExists(helper.localPath).andReturn(true)
-      helper.systemClock.currentTimeMillis.andReturn(helper.now)
       helper.fileSystem.readFileIntoBytes(helper.localPath).andReturn(helper.body)
     }
 
@@ -143,20 +133,18 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
   class Helper {
     val sender: Sender = mock[Sender]
     val oneWayHash: OneWayHash = new Sha256
-    val systemClock: SystemClock = mock[SystemClock]
     val fileSystem: FileSystem = mock[FileSystem]
     val emit = new FakeLineEmitter()
-    val downloader = new DownloaderImpl(sender, oneWayHash, systemClock, fileSystem, emit)
+    val downloader = new DownloaderImpl(sender, oneWayHash, fileSystem, emit)
     val remoteUrl: String = "remote url"
     val localPath: Path = Paths.get("local", "path")
     val localDir: Path = localPath.getParent
     val downloads: Seq[Download] = Seq(Download(remoteUrl, localPath))
-    val now = 12345
     val body = "hello".getBytes(StandardCharsets.UTF_8)
     val differentBody = "goodbye".getBytes(StandardCharsets.UTF_8)
     val hash = oneWayHash.toHexString(body)
     val differentHash = oneWayHash.toHexString(differentBody)
-    val mocks = Seq(sender, systemClock, fileSystem)
+    val mocks = Seq(sender, fileSystem)
   }
 
 }
