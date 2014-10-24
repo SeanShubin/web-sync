@@ -5,10 +5,10 @@ import org.scalatest.mock.EasyMockSugar
 
 class ShutdownHandlerTest extends FunSuite with EasyMockSugar {
   test("exit code is zero if no errors") {
-    val emit:String => Unit = new FakeLineEmitter
-    val systemShutdown:SystemShutdown = mock[SystemShutdown]
-    val shutdownHandler:ShutdownHandler = new ShutdownHandlerImpl(systemShutdown, emit)
-    val downloadResults:Seq[DownloadResult] = Seq(SampleDownloadResult.downloadResultSame)
+    val emit: String => Unit = new FakeLineEmitter
+    val systemShutdown: SystemShutdown = mock[SystemShutdown]
+    val shutdownHandler: ShutdownHandler = new ShutdownHandlerImpl(systemShutdown, emit)
+    val downloadResults: Seq[DownloadResult] = Seq(SampleDownloadResult.downloadResultSame)
 
     expecting {
       systemShutdown.shutdown(0)
@@ -20,10 +20,10 @@ class ShutdownHandlerTest extends FunSuite with EasyMockSugar {
   }
 
   test("exit code is not zero if errors") {
-    val emit:String => Unit = new FakeLineEmitter
-    val systemShutdown:SystemShutdown = mock[SystemShutdown]
-    val shutdownHandler:ShutdownHandler = new ShutdownHandlerImpl(systemShutdown, emit)
-    val downloadResults:Seq[DownloadResult] = Seq(SampleDownloadResult.downloadResultDifferent)
+    val emit: String => Unit = new FakeLineEmitter
+    val systemShutdown: SystemShutdown = mock[SystemShutdown]
+    val shutdownHandler: ShutdownHandler = new ShutdownHandlerImpl(systemShutdown, emit)
+    val downloadResults: Seq[DownloadResult] = Seq(SampleDownloadResult.downloadResultDifferent)
 
     expecting {
       systemShutdown.shutdown(1)
