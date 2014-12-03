@@ -47,7 +47,7 @@
             <dependency>
                 <groupId>org.scala-lang</groupId>
                 <artifactId>scala-library</artifactId>
-                <version>2.11.3</version>
+                <version>2.11.4</version>
             </dependency>
             <dependency>
                 <groupId>org.scala-lang.modules</groupId>
@@ -57,12 +57,12 @@
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
                 <artifactId>akka-actor_2.11</artifactId>
-                <version>2.3.6</version>
+                <version>2.3.7</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.5</version>
+                <version>2.6</version>
             </dependency>
             <dependency>
                 <groupId>org.joda</groupId>
@@ -72,12 +72,12 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-scala_2.11</artifactId>
-                <version>2.4.3</version>
+                <version>2.4.4</version>
             </dependency>
             <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
-                <version>3.2</version>
+                <version>3.3</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -89,7 +89,7 @@
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
                 <artifactId>akka-testkit_2.11</artifactId>
-                <version>2.3.6</version>
+                <version>2.3.7</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
