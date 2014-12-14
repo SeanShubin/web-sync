@@ -8,13 +8,15 @@ class RunnerImpl(configurationFilePath: Path,
                  downloader: Downloader,
                  reporter: Reporter,
                  errorHandler: ErrorHandler,
-                 notifications: Notifications) extends Runner {
+                 notifications: Notifications,
+                 logger: Logger) extends Runner {
   override def run(): Unit = {
     val configurationText = fileSystem.readFileIntoString(configurationFilePath)
-    val Configuration(reportPath, downloads) = configurationParser.parse(configurationText)
+    val Configuration(reportPath, logPath, downloads) = configurationParser.parse(configurationText)
     val downloadResults = downloader.download(downloads)
     reporter.generateReport(reportPath, downloadResults)
     notifications.summary(downloadResults)
+    logger.summary(logPath, downloadResults)
     errorHandler.shutdown(downloadResults)
   }
 }

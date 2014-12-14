@@ -9,8 +9,6 @@ import com.seanshubin.web.sync.core._
 trait ProductionRunnerWiring {
   def configurationFilePath: Path
 
-  def reportPath: Path
-
   lazy val emit: String => Unit = println
   lazy val fileSystem: FileSystem = new FileSystemImpl()
   lazy val jsonMarshaller: JsonMarshaller = new JsonMarshallerImpl
@@ -21,6 +19,8 @@ trait ProductionRunnerWiring {
   lazy val downloader: Downloader = new DownloaderImpl(sender, oneWayHash, fileSystem, notifications)
   lazy val reporter: Reporter = new ReporterImpl(jsonMarshaller, fileSystem)
   lazy val errorHandler: ErrorHandler = new ErrorHandlerImpl
+  lazy val clock:Clock = new ClockImpl
+  lazy val logger:LoggerImpl = new LoggerImpl(fileSystem, clock)
   lazy val runner: Runner = new RunnerImpl(
     configurationFilePath,
     fileSystem,
@@ -28,5 +28,7 @@ trait ProductionRunnerWiring {
     downloader,
     reporter,
     errorHandler,
-    notifications)
+    notifications,
+    logger
+  )
 }

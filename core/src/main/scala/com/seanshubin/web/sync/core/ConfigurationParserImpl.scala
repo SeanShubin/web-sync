@@ -14,7 +14,8 @@ class ConfigurationParserImpl(jsonMarshaller: JsonMarshaller) extends Configurat
       download
     }
     val reportPath = Paths.get(jsonConfiguration.reportPathParts.head, jsonConfiguration.reportPathParts.tail: _*)
-    Configuration(reportPath, downloads)
+    val logPath = Paths.get(jsonConfiguration.logPathParts.head, jsonConfiguration.logPathParts.tail: _*)
+    Configuration(reportPath, logPath, downloads)
   }
 
   def composeDownload(destinationParts: Seq[String], sourceUrl: String): Download = {

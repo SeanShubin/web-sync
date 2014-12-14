@@ -28,6 +28,17 @@ class FileSystemTest extends FunSuite {
     assert(fileSystem.fileExists(helloPath) === true)
     val actual = fileSystem.readFileIntoBytes(helloPath)
     assert(actual === helloBytes)
+  }
 
+  test("append to text file") {
+    val helloPath = IntegrationTestUtil.pathFor("hello-3.txt")
+    val fileSystem: FileSystem = new FileSystemImpl()
+    fileSystem.deleteIfExists(helloPath)
+    fileSystem.createMissingDirectories(IntegrationTestUtil.sampleDataPath)
+    fileSystem.appendLine(helloPath, "hello")
+    fileSystem.appendLine(helloPath, "world")
+    val expected = Seq("hello", "world")
+    val actual = fileSystem.readFileIntoLines(helloPath)
+    assert(actual === expected)
   }
 }

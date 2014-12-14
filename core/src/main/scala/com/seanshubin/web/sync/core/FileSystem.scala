@@ -9,6 +9,8 @@ trait FileSystem {
 
   def readFileIntoString(path: Path): String
 
+  def readFileIntoLines(path: Path): Seq[String]
+
   def readFileIntoBytes(path: Path): Seq[Byte]
 
   def writeStringToFile(s: String, path: Path)
@@ -16,4 +18,6 @@ trait FileSystem {
   def writeBytesToFile(bytes: Seq[Byte], path: Path)
 
   def fileExists(path: Path): Boolean
+
+  def appendLine(path: Path, line:String)
 }

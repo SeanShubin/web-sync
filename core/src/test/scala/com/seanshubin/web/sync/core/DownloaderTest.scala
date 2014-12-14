@@ -119,6 +119,8 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
       helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Map())).andReturn(ResponseValue(200, helper.differentBody, Map()))
       helper.fileSystem.fileExists(helper.localPath).andReturn(true)
       helper.fileSystem.readFileIntoBytes(helper.localPath).andReturn(helper.body)
+      helper.fileSystem.createMissingDirectories(helper.localDir)
+      helper.fileSystem.writeBytesToFile(helper.differentBody, helper.localPath)
       helper.notifications.downloadResult(expectedDownloadResult)
     }
 

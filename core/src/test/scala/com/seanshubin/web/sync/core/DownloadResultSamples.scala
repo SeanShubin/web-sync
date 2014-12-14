@@ -11,5 +11,7 @@ object DownloadResultSamples {
     url, downloadPath, DownloadStatus.SameInLocalAndRemote, hash, hash)
   val downloadResultDifferent = DownloadResult(
     url, downloadPath, DownloadStatus.DifferentInLocalAndRemote, hash, differentHash)
+  val downloadResultMissingBoth = DownloadResult(
+    url, downloadPath, DownloadStatus.MissingFromLocalAndRemote, None, None)
   val bunchOfDownloadResults = Seq(downloadResultSame, downloadResultDifferent)
 }

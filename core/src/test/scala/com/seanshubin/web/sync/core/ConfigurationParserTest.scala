@@ -9,6 +9,7 @@ class ConfigurationParserTest extends FunSuite {
     val configurationText =
       """{
         |    "reportPathParts": ["foo", "reports", "report.json"],
+        |    "logPathParts": ["foo", "reports", "report.txt"],
         |    "downloadsByDestination": [
         |        {
         |            "destinationPathParts": ["foo", "bar"],

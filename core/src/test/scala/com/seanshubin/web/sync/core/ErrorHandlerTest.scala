@@ -12,7 +12,7 @@ class ErrorHandlerTest extends FunSuite with EasyMockSugar {
 
   test("propagate exception if errors") {
     val errorHandler: ErrorHandler = new ErrorHandlerImpl
-    val downloadResults: Seq[DownloadResult] = Seq(DownloadResultSamples.downloadResultDifferent)
+    val downloadResults: Seq[DownloadResult] = Seq(DownloadResultSamples.downloadResultMissingBoth)
     val thrown = intercept[RuntimeException] {
       errorHandler.shutdown(downloadResults)
     }

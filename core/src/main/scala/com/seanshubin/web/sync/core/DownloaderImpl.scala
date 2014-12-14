@@ -20,7 +20,7 @@ class DownloaderImpl(sender: Sender,
     val localExists = fileSystem.fileExists(download.path)
     val downloadResult = (remoteExists, localExists) match {
       case (true, true) => handleBothExist(download.url, download.path, response.body)
-      case (true, false) => doDownload(download.url, response.body, download.path)
+      case (true, false) => handleDownloadMissing(download.url, response.body, download.path)
       case (false, true) => remoteHasGoneMissing(download.url, download.path)
       case (false, false) => notFoundAnywhere(download.url, download.path)
     }
@@ -33,12 +33,16 @@ class DownloaderImpl(sender: Sender,
     val localHash = oneWayHash.toHexString(localBytes)
     val remoteHash = oneWayHash.toHexString(remoteBytes)
     if (localHash == remoteHash) doNothing(url, localPath, localHash, remoteHash)
-    else errorFilesDifferent(url, localPath, localHash, remoteHash)
+    else handleFilesDifferent(url, localPath, localHash, remoteHash, remoteBytes)
   }
 
-  private def doDownload(url: String, remoteBytes: Seq[Byte], localPath: Path): DownloadResult = {
+  private def doDownload(url: String, remoteBytes: Seq[Byte], localPath: Path): Unit = {
     fileSystem.createMissingDirectories(localPath.getParent)
     fileSystem.writeBytesToFile(remoteBytes, localPath)
+  }
+
+  private def handleDownloadMissing(url: String, remoteBytes: Seq[Byte], localPath: Path): DownloadResult = {
+    doDownload(url, remoteBytes, localPath)
     val hash = oneWayHash.toHexString(remoteBytes)
     DownloadResult(
       url,
@@ -72,7 +76,8 @@ class DownloaderImpl(sender: Sender,
     DownloadResult(url, localPath, DownloadStatus.SameInLocalAndRemote, Some(localHash), Some(remoteHash))
   }
 
-  private def errorFilesDifferent(url: String, localPath: Path, localHash: String, remoteHash: String): DownloadResult = {
+  private def handleFilesDifferent(url: String, localPath: Path, localHash: String, remoteHash: String, remoteBytes:Seq[Byte]): DownloadResult = {
+    doDownload(url, remoteBytes, localPath)
     DownloadResult(url, localPath, DownloadStatus.DifferentInLocalAndRemote, Some(localHash), Some(remoteHash))
   }
 }

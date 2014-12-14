@@ -1,7 +1,10 @@
 package com.seanshubin.web.sync.core
 
 import java.nio.charset.{Charset, StandardCharsets}
+import java.nio.file.StandardOpenOption.{APPEND, CREATE}
 import java.nio.file.{Files, Path}
+
+import scala.collection.JavaConversions
 
 class FileSystemImpl extends FileSystem {
   override def readFileIntoString(path: Path): String = bytesToString(Files.readAllBytes(path))
@@ -14,9 +17,13 @@ class FileSystemImpl extends FileSystem {
 
   override def readFileIntoBytes(path: Path): Seq[Byte] = Files.readAllBytes(path)
 
+  override def readFileIntoLines(path: Path): Seq[String] = JavaConversions.collectionAsScalaIterable(Files.readAllLines(path)).toSeq
+
   override def fileExists(path: Path): Boolean = Files.exists(path)
 
   override def deleteIfExists(path: Path): Unit = Files.deleteIfExists(path)
+
+  override def appendLine(path: Path, line: String): Unit = Files.write(path, JavaConversions.asJavaIterable(Seq(line)), APPEND, CREATE)
 
   private val charset: Charset = StandardCharsets.UTF_8
 

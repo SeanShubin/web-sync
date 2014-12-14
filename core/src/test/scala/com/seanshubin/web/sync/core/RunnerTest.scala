@@ -15,12 +15,15 @@ class RunnerTest extends FunSuite with EasyMockSugar {
     val reporter: Reporter = mock[Reporter]
     val errorHandler: ErrorHandler = mock[ErrorHandler]
     val notifications: Notifications = mock[Notifications]
-    val runner: Runner = new RunnerImpl(configurationLocation, fileSystem, configurationParser, downloader, reporter, errorHandler, notifications)
+    val logger:Logger = mock[Logger]
+    val runner: Runner = new RunnerImpl(
+      configurationLocation, fileSystem, configurationParser, downloader, reporter, errorHandler, notifications, logger)
     val reportPath: Path = Paths.get("foo")
+    val logPath:Path = Paths.get("log")
     val bar1: Path = Paths.get("bar1")
     val bar2: Path = Paths.get("bar2")
     val downloads: Seq[Download] = DownloadSamples.bunchOfDownloads
-    val configuration: Configuration = Configuration(reportPath, downloads)
+    val configuration: Configuration = Configuration(reportPath, logPath, downloads)
     val downloadResults: Seq[DownloadResult] = DownloadResultSamples.bunchOfDownloadResults
     expecting {
       fileSystem.readFileIntoString(configurationLocation).andReturn(configurationText)
@@ -28,9 +31,10 @@ class RunnerTest extends FunSuite with EasyMockSugar {
       downloader.download(downloads).andReturn(downloadResults)
       reporter.generateReport(reportPath, downloadResults)
       notifications.summary(downloadResults)
+      logger.summary(logPath, downloadResults)
       errorHandler.shutdown(downloadResults)
     }
-    whenExecuting(fileSystem, configurationParser, downloader, reporter, errorHandler, notifications) {
+    whenExecuting(fileSystem, configurationParser, downloader, reporter, errorHandler, notifications, logger) {
       runner.run()
     }
   }
