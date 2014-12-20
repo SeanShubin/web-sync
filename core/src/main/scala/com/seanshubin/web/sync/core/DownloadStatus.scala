@@ -2,8 +2,9 @@ package com.seanshubin.web.sync.core
 
 import scala.collection.mutable.ArrayBuffer
 
-sealed abstract case class DownloadStatus(isError: Boolean, shouldLog:Boolean, name: String, description: String) {
+sealed abstract case class DownloadStatus(isError: Boolean, shouldLog: Boolean, name: String, description: String) {
   DownloadStatus.valuesBuffer += this
+
   override def toString = name
 }
 

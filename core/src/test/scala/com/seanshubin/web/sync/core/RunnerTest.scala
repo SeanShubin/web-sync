@@ -15,11 +15,11 @@ class RunnerTest extends FunSuite with EasyMockSugar {
     val reporter: Reporter = mock[Reporter]
     val errorHandler: ErrorHandler = mock[ErrorHandler]
     val notifications: Notifications = mock[Notifications]
-    val logger:Logger = mock[Logger]
+    val logger: Logger = mock[Logger]
     val runner: Runner = new RunnerImpl(
       configurationLocation, fileSystem, configurationParser, downloader, reporter, errorHandler, notifications, logger)
     val reportPath: Path = Paths.get("foo")
-    val logPath:Path = Paths.get("log")
+    val logPath: Path = Paths.get("log")
     val bar1: Path = Paths.get("bar1")
     val bar2: Path = Paths.get("bar2")
     val downloads: Seq[Download] = DownloadSamples.bunchOfDownloads

@@ -19,8 +19,8 @@ trait ProductionRunnerWiring {
   lazy val downloader: Downloader = new DownloaderImpl(sender, oneWayHash, fileSystem, notifications)
   lazy val reporter: Reporter = new ReporterImpl(jsonMarshaller, fileSystem)
   lazy val errorHandler: ErrorHandler = new ErrorHandlerImpl
-  lazy val clock:Clock = new ClockImpl
-  lazy val logger:LoggerImpl = new LoggerImpl(fileSystem, clock)
+  lazy val clock: Clock = new ClockImpl
+  lazy val logger: LoggerImpl = new LoggerImpl(fileSystem, clock)
   lazy val runner: Runner = new RunnerImpl(
     configurationFilePath,
     fileSystem,

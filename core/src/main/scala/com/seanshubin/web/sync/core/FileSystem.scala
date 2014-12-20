@@ -19,5 +19,5 @@ trait FileSystem {
 
   def fileExists(path: Path): Boolean
 
-  def appendLine(path: Path, line:String)
+  def appendLine(path: Path, line: String)
 }

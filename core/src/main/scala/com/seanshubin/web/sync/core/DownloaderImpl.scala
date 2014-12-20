@@ -76,7 +76,7 @@ class DownloaderImpl(sender: Sender,
     DownloadResult(url, localPath, DownloadStatus.SameInLocalAndRemote, Some(localHash), Some(remoteHash))
   }
 
-  private def handleFilesDifferent(url: String, localPath: Path, localHash: String, remoteHash: String, remoteBytes:Seq[Byte]): DownloadResult = {
+  private def handleFilesDifferent(url: String, localPath: Path, localHash: String, remoteHash: String, remoteBytes: Seq[Byte]): DownloadResult = {
     doDownload(url, remoteBytes, localPath)
     DownloadResult(url, localPath, DownloadStatus.DifferentInLocalAndRemote, Some(localHash), Some(remoteHash))
   }
