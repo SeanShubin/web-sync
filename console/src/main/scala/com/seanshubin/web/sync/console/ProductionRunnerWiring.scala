@@ -2,7 +2,7 @@ package com.seanshubin.web.sync.console
 
 import java.nio.file.Path
 
-import com.seanshubin.http.values.client.apache.HttpSender
+import com.seanshubin.http.values.client.google.HttpSender
 import com.seanshubin.http.values.core.Sender
 import com.seanshubin.web.sync.core._
 
