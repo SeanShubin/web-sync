@@ -16,7 +16,7 @@
         <repository>
             <id>sean</id>
             <name>sean</name>
-            <url>http://thoughtfulcraftsmanship.com/nexus/content/repositories/sean/</url>
+            <url>http://thoughtfulcraftsmanship.com/nexus/content/repositories/sean-snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -140,7 +140,7 @@
     <distributionManagement>
         <repository>
             <id>sean</id>
-            <url>http://thoughtfulcraftsmanship.com/nexus/content/repositories/sean/</url>
+            <url>http://thoughtfulcraftsmanship.com/nexus/content/repositories/sean-snapshots</url>
         </repository>
     </distributionManagement>
 </project>
