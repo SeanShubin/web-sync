@@ -19,7 +19,7 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
 
     expecting {
       helper.notifications.beginDownloading(helper.downloads)
-      helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Map())).andReturn(ResponseValue(200, helper.body, Map()))
+      helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Seq())).andReturn(ResponseValue(200, helper.body, Seq()))
       helper.fileSystem.fileExists(helper.localPath).andReturn(true)
       helper.fileSystem.readFileIntoBytes(helper.localPath).andReturn(helper.body)
       helper.notifications.downloadResult(expectedDownloadResult)
@@ -43,7 +43,7 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
 
     expecting {
       helper.notifications.beginDownloading(helper.downloads)
-      helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Map())).andReturn(ResponseValue(404, Seq(), Map()))
+      helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Seq())).andReturn(ResponseValue(404, Seq(), Seq()))
       helper.fileSystem.fileExists(helper.localPath).andReturn(false)
       helper.notifications.downloadResult(expectedDownloadResult)
     }
@@ -67,7 +67,7 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
 
     expecting {
       helper.notifications.beginDownloading(helper.downloads)
-      helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Map())).andReturn(ResponseValue(200, helper.body, Map()))
+      helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Seq())).andReturn(ResponseValue(200, helper.body, Seq()))
       helper.fileSystem.fileExists(helper.localPath).andReturn(false)
       helper.fileSystem.createMissingDirectories(helper.localDir)
       helper.fileSystem.writeBytesToFile(helper.body, helper.localPath)
@@ -92,7 +92,7 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
 
     expecting {
       helper.notifications.beginDownloading(helper.downloads)
-      helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Map())).andReturn(ResponseValue(404, helper.body, Map()))
+      helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Seq())).andReturn(ResponseValue(404, helper.body, Seq()))
       helper.fileSystem.fileExists(helper.localPath).andReturn(true)
       helper.fileSystem.readFileIntoBytes(helper.localPath).andReturn(helper.body)
       helper.notifications.downloadResult(expectedDownloadResult)
@@ -116,7 +116,7 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
 
     expecting {
       helper.notifications.beginDownloading(helper.downloads)
-      helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Map())).andReturn(ResponseValue(200, helper.differentBody, Map()))
+      helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Seq())).andReturn(ResponseValue(200, helper.differentBody, Seq()))
       helper.fileSystem.fileExists(helper.localPath).andReturn(true)
       helper.fileSystem.readFileIntoBytes(helper.localPath).andReturn(helper.body)
       helper.fileSystem.createMissingDirectories(helper.localDir)

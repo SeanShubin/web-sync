@@ -14,7 +14,7 @@ class DownloaderImpl(sender: Sender,
   }
 
   private def singleDownload(download: Download): DownloadResult = {
-    val request = RequestValue(download.url, "get", Seq(), Map())
+    val request = RequestValue(download.url, "get", Seq(), Seq())
     val response = sender.send(request)
     val remoteExists = ResponseValue.isSuccess(response.statusCode)
     val localExists = fileSystem.fileExists(download.path)
