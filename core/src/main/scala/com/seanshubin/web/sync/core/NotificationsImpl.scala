@@ -5,6 +5,10 @@ class NotificationsImpl(emit: String => Unit) extends Notifications {
     emit(s"syncing ${downloads.size} resources from web to disk")
   }
 
+  override def beginSingleDownload(download: Download): Unit = {
+    emit(s"syncing ${download.url}")
+  }
+
   override def downloadResult(downloadResult: DownloadResult): Unit = {
     val DownloadResult(url, path, status, _, _) = downloadResult
     val message = f"  ${status.name}%-9s (${status.description}%-40s): $url%s -> $path%s"

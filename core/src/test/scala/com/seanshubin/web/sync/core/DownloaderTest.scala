@@ -9,143 +9,161 @@ import org.scalatest.mock.EasyMockSugar
 
 class DownloaderTest extends FunSuite with EasyMockSugar {
   test("already downloaded") {
-    val helper = new Helper
-    val expectedDownloadResult = DownloadResult(
-      helper.remoteUrl,
-      helper.localPath,
-      DownloadStatus.SameInLocalAndRemote,
-      localHash = Some(helper.hash),
-      remoteHash = Some(helper.hash))
+    new Helper {
+      lazy val expectedDownloadResult = DownloadResult(
+        remoteUrl,
+        localPath,
+        DownloadStatus.SameInLocalAndRemote,
+        localHash = Some(hash),
+        remoteHash = Some(hash))
 
-    expecting {
-      helper.notifications.beginDownloading(helper.downloads)
-      helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Seq())).andReturn(ResponseValue(200, helper.body, Seq()))
-      helper.fileSystem.fileExists(helper.localPath).andReturn(true)
-      helper.fileSystem.readFileIntoBytes(helper.localPath).andReturn(helper.body)
-      helper.notifications.downloadResult(expectedDownloadResult)
-    }
+      override def expecting = () => {
+        notifications.beginDownloading(downloads)
+        notifications.beginSingleDownload(downloads(0))
+        sender.send(RequestValue(remoteUrl, "get", Seq(), Seq())).andReturn(ResponseValue(200, body, Seq()))
+        fileSystem.fileExists(localPath).andReturn(true)
+        fileSystem.readFileIntoBytes(localPath).andReturn(body)
+        notifications.downloadResult(expectedDownloadResult)
+      }
 
-    whenExecuting(helper.mocks: _*) {
-      val results = helper.downloader.download(helper.downloads)
-      assert(results.size === 1)
-      assert(results(0) === expectedDownloadResult)
+      override def whenExecuting = () => {
+        val results = downloader.download(downloads)
+        assert(results.size === 1)
+        assert(results(0) === expectedDownloadResult)
+      }
     }
   }
 
   test("missing from both local and remote") {
-    val helper = new Helper
-    val expectedDownloadResult = DownloadResult(
-      helper.remoteUrl,
-      helper.localPath,
-      DownloadStatus.MissingFromLocalAndRemote,
-      localHash = None,
-      remoteHash = None)
+    new Helper {
+      lazy val expectedDownloadResult = DownloadResult(
+        remoteUrl,
+        localPath,
+        DownloadStatus.MissingFromLocalAndRemote,
+        localHash = None,
+        remoteHash = None)
 
-    expecting {
-      helper.notifications.beginDownloading(helper.downloads)
-      helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Seq())).andReturn(ResponseValue(404, Seq(), Seq()))
-      helper.fileSystem.fileExists(helper.localPath).andReturn(false)
-      helper.notifications.downloadResult(expectedDownloadResult)
-    }
+      override def expecting = () => {
+        notifications.beginDownloading(downloads)
+        notifications.beginSingleDownload(downloads(0))
+        sender.send(RequestValue(remoteUrl, "get", Seq(), Seq())).andReturn(ResponseValue(404, Seq(), Seq()))
+        fileSystem.fileExists(localPath).andReturn(false)
+        notifications.downloadResult(expectedDownloadResult)
+      }
 
-    whenExecuting(helper.mocks: _*) {
-      val results = helper.downloader.download(helper.downloads)
-      assert(results.size === 1)
-      assert(results(0) === expectedDownloadResult)
+      override def whenExecuting = () => {
+        val results = downloader.download(downloads)
+        assert(results.size === 1)
+        assert(results(0) === expectedDownloadResult)
+      }
     }
   }
 
   test("download if missing locally and exists remotely") {
-    val helper = new Helper
-    val expectedDownloadResult = DownloadResult(
-      helper.remoteUrl,
-      helper.localPath,
-      DownloadStatus.MissingFromLocalAndPresentInRemote,
-      localHash = None,
-      remoteHash = Some(helper.hash)
-    )
+    new Helper {
+      lazy val expectedDownloadResult = DownloadResult(
+        remoteUrl,
+        localPath,
+        DownloadStatus.MissingFromLocalAndPresentInRemote,
+        localHash = None,
+        remoteHash = Some(hash)
+      )
 
-    expecting {
-      helper.notifications.beginDownloading(helper.downloads)
-      helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Seq())).andReturn(ResponseValue(200, helper.body, Seq()))
-      helper.fileSystem.fileExists(helper.localPath).andReturn(false)
-      helper.fileSystem.createMissingDirectories(helper.localDir)
-      helper.fileSystem.writeBytesToFile(helper.body, helper.localPath)
-      helper.notifications.downloadResult(expectedDownloadResult)
-    }
+      override def expecting = () => {
+        notifications.beginDownloading(downloads)
+        notifications.beginSingleDownload(downloads(0))
+        sender.send(RequestValue(remoteUrl, "get", Seq(), Seq())).andReturn(ResponseValue(200, body, Seq()))
+        fileSystem.fileExists(localPath).andReturn(false)
+        fileSystem.createMissingDirectories(localDir)
+        fileSystem.writeBytesToFile(body, localPath)
+        notifications.downloadResult(expectedDownloadResult)
+      }
 
-    whenExecuting(helper.mocks: _*) {
-      val results = helper.downloader.download(helper.downloads)
-      assert(results.size === 1)
-      assert(results(0) === expectedDownloadResult)
+      override def whenExecuting = () => {
+        val results = downloader.download(downloads)
+        assert(results.size === 1)
+        assert(results(0) === expectedDownloadResult)
+      }
     }
   }
 
   test("exists locally and missing remotely") {
-    val helper = new Helper
-    val expectedDownloadResult = DownloadResult(
-      helper.remoteUrl,
-      helper.localPath,
-      DownloadStatus.PresentLocallyAndMissingFromRemote,
-      localHash = Some(helper.hash),
-      remoteHash = None)
+    new Helper {
+      lazy val expectedDownloadResult = DownloadResult(
+        remoteUrl,
+        localPath,
+        DownloadStatus.PresentLocallyAndMissingFromRemote,
+        localHash = Some(hash),
+        remoteHash = None)
 
-    expecting {
-      helper.notifications.beginDownloading(helper.downloads)
-      helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Seq())).andReturn(ResponseValue(404, helper.body, Seq()))
-      helper.fileSystem.fileExists(helper.localPath).andReturn(true)
-      helper.fileSystem.readFileIntoBytes(helper.localPath).andReturn(helper.body)
-      helper.notifications.downloadResult(expectedDownloadResult)
-    }
+      override def expecting = () => {
+        notifications.beginDownloading(downloads)
+        notifications.beginSingleDownload(downloads(0))
+        sender.send(RequestValue(remoteUrl, "get", Seq(), Seq())).andReturn(ResponseValue(404, body, Seq()))
+        fileSystem.fileExists(localPath).andReturn(true)
+        fileSystem.readFileIntoBytes(localPath).andReturn(body)
+        notifications.downloadResult(expectedDownloadResult)
+      }
 
-    whenExecuting(helper.mocks: _*) {
-      val results = helper.downloader.download(helper.downloads)
-      assert(results.size === 1)
-      assert(results(0) === expectedDownloadResult)
+      override def whenExecuting = () => {
+        val results = downloader.download(downloads)
+        assert(results.size === 1)
+        assert(results(0) === expectedDownloadResult)
+      }
     }
   }
 
   test("files different") {
-    val helper = new Helper
-    val expectedDownloadResult = DownloadResult(
-      helper.remoteUrl,
-      helper.localPath,
-      DownloadStatus.DifferentInLocalAndRemote,
-      localHash = Some(helper.hash),
-      remoteHash = Some(helper.differentHash))
+    new Helper {
+      lazy val expectedDownloadResult = DownloadResult(
+        remoteUrl,
+        localPath,
+        DownloadStatus.DifferentInLocalAndRemote,
+        localHash = Some(hash),
+        remoteHash = Some(differentHash))
 
-    expecting {
-      helper.notifications.beginDownloading(helper.downloads)
-      helper.sender.send(RequestValue(helper.remoteUrl, "get", Seq(), Seq())).andReturn(ResponseValue(200, helper.differentBody, Seq()))
-      helper.fileSystem.fileExists(helper.localPath).andReturn(true)
-      helper.fileSystem.readFileIntoBytes(helper.localPath).andReturn(helper.body)
-      helper.fileSystem.createMissingDirectories(helper.localDir)
-      helper.fileSystem.writeBytesToFile(helper.differentBody, helper.localPath)
-      helper.notifications.downloadResult(expectedDownloadResult)
-    }
+      override def expecting = () => {
+        notifications.beginDownloading(downloads)
+        notifications.beginSingleDownload(downloads(0))
+        sender.send(RequestValue(remoteUrl, "get", Seq(), Seq())).andReturn(ResponseValue(200, differentBody, Seq()))
+        fileSystem.fileExists(localPath).andReturn(true)
+        fileSystem.readFileIntoBytes(localPath).andReturn(body)
+        fileSystem.createMissingDirectories(localDir)
+        fileSystem.writeBytesToFile(differentBody, localPath)
+        notifications.downloadResult(expectedDownloadResult)
+      }
 
-    whenExecuting(helper.mocks: _*) {
-      val results = helper.downloader.download(helper.downloads)
-      assert(results.size === 1)
-      assert(results(0) === expectedDownloadResult)
+      override def whenExecuting = () => {
+        val results = downloader.download(downloads)
+        assert(results.size === 1)
+        assert(results(0) === expectedDownloadResult)
+      }
     }
   }
 
-  class Helper {
-    val sender: Sender = mock[Sender]
-    val oneWayHash: OneWayHash = new Sha256
-    val fileSystem: FileSystem = mock[FileSystem]
-    val notifications: Notifications = mock[Notifications]
-    val downloader = new DownloaderImpl(sender, oneWayHash, fileSystem, notifications)
-    val remoteUrl: String = "remote url"
-    val localPath: Path = Paths.get("local", "path")
-    val localDir: Path = localPath.getParent
-    val downloads: Seq[Download] = Seq(Download(remoteUrl, localPath))
-    val body = "hello".getBytes(StandardCharsets.UTF_8)
-    val differentBody = "goodbye".getBytes(StandardCharsets.UTF_8)
-    val hash = oneWayHash.toHexString(body)
-    val differentHash = oneWayHash.toHexString(differentBody)
-    val mocks = Seq(sender, fileSystem, notifications)
+  trait Helper {
+    lazy val sender: Sender = mock[Sender]
+    lazy val oneWayHash: OneWayHash = new Sha256
+    lazy val fileSystem: FileSystem = mock[FileSystem]
+    lazy val notifications: Notifications = mock[Notifications]
+    lazy val downloader = new DownloaderImpl(sender, oneWayHash, fileSystem, notifications)
+    lazy val remoteUrl: String = "remote url"
+    lazy val localPath: Path = Paths.get("local", "path")
+    lazy val localDir: Path = localPath.getParent
+    lazy val downloads: Seq[Download] = Seq(Download(remoteUrl, localPath))
+    lazy val body = "hello".getBytes(StandardCharsets.UTF_8)
+    lazy val differentBody = "goodbye".getBytes(StandardCharsets.UTF_8)
+    lazy val hash = oneWayHash.toHexString(body)
+    lazy val differentHash = oneWayHash.toHexString(differentBody)
+
+    def expecting: () => Unit
+
+    def whenExecuting: () => Unit
+
+    expecting()
+    EasyMockSugar.whenExecuting(sender, fileSystem, notifications) {
+      whenExecuting()
+    }
   }
 
 }
