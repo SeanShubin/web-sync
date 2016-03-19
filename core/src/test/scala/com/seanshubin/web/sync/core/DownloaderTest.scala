@@ -147,7 +147,7 @@ class DownloaderTest extends FunSuite with EasyMockSugar {
     lazy val fileSystem: FileSystem = mock[FileSystem]
     lazy val notifications: Notifications = mock[Notifications]
     lazy val downloader = new DownloaderImpl(sender, oneWayHash, fileSystem, notifications)
-    lazy val remoteUrl: String = "remote url"
+    lazy val remoteUrl: String = "remote-url"
     lazy val localPath: Path = Paths.get("local", "path")
     lazy val localDir: Path = localPath.getParent
     lazy val downloads: Seq[Download] = Seq(Download(remoteUrl, localPath))
