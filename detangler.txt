@@ -1,0 +1,17 @@
+{
+  reportDir generated/detangled
+  searchPaths
+  [
+    console/target/web-sync.jar
+  ]
+  level 2
+  startsWith
+  {
+    include [[com seanshubin web sync]]
+    exclude []
+    drop [[com seanshubin web sync]]
+  }
+  ignoreFiles []
+  canFailBuild false
+  allowedInCycle []
+}
