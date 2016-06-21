@@ -14,7 +14,7 @@ import scala.collection.JavaConversions
 class JsonMarshallerImpl extends JsonMarshaller {
   private val mapper = new ObjectMapper()
   mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-  mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+  mapper.setSerializationInclusion(JsonInclude.Include.NON_ABSENT)
   mapper.configure(SerializationFeature.INDENT_OUTPUT, true)
 
   mapper.registerModule(DefaultScalaModule)
