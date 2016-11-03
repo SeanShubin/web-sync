@@ -4,7 +4,7 @@ import java.nio.charset.{Charset, StandardCharsets}
 import java.nio.file.StandardOpenOption.{APPEND, CREATE}
 import java.nio.file.{Files, Path}
 
-import scala.collection.JavaConversions
+import scala.collection.JavaConverters._
 
 class FileSystemImpl extends FileSystem {
   override def readFileIntoString(path: Path): String = bytesToString(Files.readAllBytes(path))
@@ -17,13 +17,13 @@ class FileSystemImpl extends FileSystem {
 
   override def readFileIntoBytes(path: Path): Seq[Byte] = Files.readAllBytes(path)
 
-  override def readFileIntoLines(path: Path): Seq[String] = JavaConversions.collectionAsScalaIterable(Files.readAllLines(path)).toSeq
+  override def readFileIntoLines(path: Path): Seq[String] = Files.readAllLines(path).asScala
 
   override def fileExists(path: Path): Boolean = Files.exists(path)
 
   override def deleteIfExists(path: Path): Unit = Files.deleteIfExists(path)
 
-  override def appendLine(path: Path, line: String): Unit = Files.write(path, JavaConversions.asJavaIterable(Seq(line)), APPEND, CREATE)
+  override def appendLine(path: Path, line: String): Unit = Files.write(path, Seq(line).asJava, APPEND, CREATE)
 
   private val charset: Charset = StandardCharsets.UTF_8
 
