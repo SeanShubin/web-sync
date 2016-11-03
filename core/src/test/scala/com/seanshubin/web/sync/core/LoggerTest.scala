@@ -4,7 +4,7 @@ import java.nio.file.Paths
 import java.time.ZonedDateTime
 
 import org.scalatest.FunSuite
-import org.scalatest.mock.EasyMockSugar
+import org.scalatest.easymock.EasyMockSugar
 
 class LoggerTest extends FunSuite with EasyMockSugar {
   test("all good") {

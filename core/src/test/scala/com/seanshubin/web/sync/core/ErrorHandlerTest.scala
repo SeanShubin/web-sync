@@ -1,7 +1,7 @@
 package com.seanshubin.web.sync.core
 
 import org.scalatest.FunSuite
-import org.scalatest.mock.EasyMockSugar
+import org.scalatest.easymock.EasyMockSugar
 
 class ErrorHandlerTest extends FunSuite with EasyMockSugar {
   test("do nothing if no errors") {

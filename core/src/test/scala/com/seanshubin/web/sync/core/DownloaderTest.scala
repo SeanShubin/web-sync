@@ -5,7 +5,7 @@ import java.nio.file.{Path, Paths}
 
 import com.seanshubin.http.values.core.{RequestValue, ResponseValue, Sender}
 import org.scalatest.FunSuite
-import org.scalatest.mock.EasyMockSugar
+import org.scalatest.easymock.EasyMockSugar
 
 class DownloaderTest extends FunSuite with EasyMockSugar {
   test("already downloaded") {

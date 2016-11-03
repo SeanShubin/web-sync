@@ -3,7 +3,7 @@ package com.seanshubin.web.sync.core
 import java.nio.file.{Path, Paths}
 
 import org.scalatest.FunSuite
-import org.scalatest.mock.EasyMockSugar
+import org.scalatest.easymock.EasyMockSugar
 
 class RunnerTest extends FunSuite with EasyMockSugar {
   test("application flow") {

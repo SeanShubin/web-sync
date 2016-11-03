@@ -3,7 +3,7 @@ package com.seanshubin.web.sync.core
 import java.nio.file.Paths
 
 import org.scalatest.FunSuite
-import org.scalatest.mock.EasyMockSugar
+import org.scalatest.easymock.EasyMockSugar
 
 class ReporterTest extends FunSuite with EasyMockSugar {
   test("generate report") {
