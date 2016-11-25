@@ -2,7 +2,7 @@ package com.seanshubin.web.sync.core
 
 import java.nio.file.Path
 
-import com.seanshubin.http.values.core.{RequestValue, ResponseValue, Sender}
+import com.seanshubin.http.values.domain.{RequestValue, ResponseValue, Sender}
 
 class DownloaderImpl(sender: Sender,
                      oneWayHash: OneWayHash,

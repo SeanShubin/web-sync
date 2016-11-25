@@ -3,7 +3,7 @@ package com.seanshubin.web.sync.core
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Path, Paths}
 
-import com.seanshubin.http.values.core.{RequestValue, ResponseValue, Sender}
+import com.seanshubin.http.values.domain.{RequestValue, ResponseValue, Sender}
 import org.scalatest.FunSuite
 import org.scalatest.easymock.EasyMockSugar
 
