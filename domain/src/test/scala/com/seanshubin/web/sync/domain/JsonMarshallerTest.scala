@@ -2,14 +2,6 @@ package com.seanshubin.web.sync.domain
 
 import org.scalatest.FunSuite
 
-case class SampleForMarshalling(stringSeq: Seq[String],
-                                stringSeqSeq: Seq[Seq[String]],
-                                optionString: Option[String])
-
-case class UnknownPropertiesTestHelper(bar: Int)
-
-case class NullPropertiesTestHelper(a: String, b: String, c: Option[String], d: Option[String])
-
 class JsonMarshallerTest extends FunSuite {
   val jsonMarshaller: JsonMarshaller = new JsonMarshallerImpl
   test("sample to json") {
@@ -47,9 +39,11 @@ class JsonMarshallerTest extends FunSuite {
         val expectedMessage =
           "Error while attempting to parse \"{ \\\"a\\\" : \\\"b\\\" \": " +
             "Unexpected end-of-input: expected close marker for Object " +
-            "(start marker at [Source: { \"a\" : \"b\" ; line: 1, column: 1])\n" +
-            " at [Source: { \"a\" : \"b\" ; line: 1, column: 25]"
+            "(start marker at [Source: (String)\"{ \"a\" : \"b\" \"; line: 1, column: 1])\n" +
+            " at [Source: (String)\"{ \"a\" : \"b\" \"; line: 1, column: 25]"
         val actualMessage = ex.getMessage
+        println(expectedMessage)
+        println(actualMessage)
         assert(actualMessage === expectedMessage)
     }
   }
